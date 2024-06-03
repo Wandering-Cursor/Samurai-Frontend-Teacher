@@ -20,6 +20,15 @@ export class OverviewComponent implements OnInit {
   taskId: string = '';
   fileId: any;
 
+
+  translations: { [key: string]: string } = {
+    open: 'Відкриті',
+    in_review: 'На перевірці',
+    in_progress: 'В роботі',
+    resubmit: 'На доперевірці',
+    done: 'Зроблено'
+  };
+
   constructor(
     private route: ActivatedRoute,
     private apiService: restApiService,
@@ -99,23 +108,23 @@ export class OverviewComponent implements OnInit {
     });
   }
 
-downloadFile(fileId: string) {
-  this.apiService.downloadFile(fileId).subscribe({
-    next: ({ blob, filename }) => {
-      const url = window.URL.createObjectURL(blob);
-      const anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.download = filename;  // Use the extracted filename
-      document.body.appendChild(anchor);
-      anchor.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(anchor);
-    },
-    error: error => {
-      console.error('Download failed:', error);
-    }
-  });
-}
+  downloadFile(fileId: string) {
+    this.apiService.downloadFile(fileId).subscribe({
+      next: ({ blob, filename }) => {
+        const url = window.URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = filename;  // Use the extracted filename
+        document.body.appendChild(anchor);
+        anchor.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(anchor);
+      },
+      error: error => {
+        console.error('Download failed:', error);
+      }
+    });
+  }
 
 
   
@@ -161,5 +170,10 @@ downloadFile(fileId: string) {
           },
         });
     }
+  }
+
+  
+  getTranslatedStatus(status: string): string {
+    return this.translations[status] ?? status;
   }
 }
